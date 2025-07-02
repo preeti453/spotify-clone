@@ -1,0 +1,24 @@
+{
+  "name": "spotify",
+  "version": "1.0.0",
+  "main": "oldsript.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/preeti453/spotify-clone.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/preeti453/spotify-clone/issues"
+  },
+  "homepage": "https://github.com/preeti453/spotify-clone#readme",
+  "description": "",
+  "dependencies": {
+    "express": "^5.1.0"
+  }
+}
