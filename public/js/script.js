@@ -76,10 +76,18 @@ const playmusic = (track, pause = false) => {
 };
 
 async function displayAlbumns() {
+    console.log("Fetching directory list...");
     let a = await fetch(`songs/`); // changed
     let response = await a.text();
+
+    console.log("Fetched HTML:", response);
     let div = document.createElement("div");
     div.innerHTML = response;
+
+
+    // let anchors = div.getElementsByTagName("a");
+    // let cardContainer = document.querySelector(".card-container");
+
     let anchors = div.getElementsByTagName("a");
     let cardContainer = document.querySelector(".card-container");
 
@@ -88,15 +96,19 @@ async function displayAlbumns() {
         const e = array[index];
 
         if (e.href.includes("/songs")) {
-            let folder = e.href.split("/").slice(-2)[0];
+            // ✅ Fix the weird backslashes
+            let cleanHref = e.getAttribute("href").replace(/\\/g, "/");
+
+            // ✅ Extract folder name properly
+            let folder = cleanHref.split("/").filter(Boolean).pop();
 
             // Get the metadata of the folder
-            let a = await fetch(`/songs/${folder}/info.json`); // changed
-            let response = await a.json();
+            try {
+                let a = await fetch(`songs/${folder}/info.json`);
+                let response = await a.json();
 
-            cardContainer.innerHTML =
-                cardContainer.innerHTML +
-                `<div data-folder="${folder}" class="card">
+                cardContainer.innerHTML += `
+            <div data-folder="${folder}" class="card">
                 <div class="green">
                     <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40">
                         <circle cx="20" cy="20" r="18" fill="#1fdf64" />
@@ -107,17 +119,21 @@ async function displayAlbumns() {
                 <h2>${response.title}</h2>
                 <p>${response.Description}</p>
             </div>`;
+            } catch (err) {
+                console.error(`Error loading info.json for ${folder}`, err);
+            }
         }
     }
-
-    // load the folder whenever a card is clicked
-    Array.from(document.getElementsByClassName("card")).forEach((e) => {
-        e.addEventListener("click", async (item) => {
-            songs = await getSongs(`songs/${item.currentTarget.dataset.folder}`);
-            playmusic(songs[0]);
-        });
-    });
 }
+
+// load the folder whenever a card is clicked
+Array.from(document.getElementsByClassName("card")).forEach((e) => {
+    e.addEventListener("click", async (item) => {
+        songs = await getSongs(`songs/${item.currentTarget.dataset.folder}`);
+        playmusic(songs[0]);
+    });
+});
+
 
 async function main() {
     // get the list of all the songs
