@@ -5,16 +5,15 @@ const path = require("path");
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-// Serve static files
+// Serve all public files
 app.use(express.static(path.join(__dirname, "public")));
 
-// Enable directory listing for /songs
-app.use(
-  "/songs",
-  serveIndex(path.join(__dirname, "public/songs"), { icons: true })
-);
+// ✅ Serve /songs folder and its nested content (e.g., info.json, images, mp3s)
+app.use("/songs", express.static(path.join(__dirname, "public/songs")));
 
-// Start the server
+// Show directory listing (optional)
+app.use("/songs", serveIndex(path.join(__dirname, "public/songs"), { icons: true }));
+
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
 });
